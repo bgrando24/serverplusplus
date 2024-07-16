@@ -24,6 +24,11 @@ FROM gcc:latest
 # Set the working directory
 WORKDIR /src
 
+# Install the necessary libraries
+RUN apt-get update && apt-get install -y \
+    libstdc++6 \
+    libssl-dev
+
 # Copy the built binary from the builder stage
 COPY --from=builder /src/build/bin/serverplusplus /usr/local/bin/serverplusplus
 

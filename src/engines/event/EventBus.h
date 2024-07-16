@@ -1,6 +1,7 @@
 #include "Event.h"
 #include <functional>
 #include <map>
+#include <list>
 /**
  * @brief The EventBus is the central mechanism for managing publishing and subscribing to events in Server++
  */
@@ -23,6 +24,11 @@ public:
      * @param event The event that triggered the callback
      */
     using EventHandler = std::function<void(const Event &)>;
+
+    /**
+     * Initialize the EventBus, setup the event queue and event handlers
+     */
+    void Init();
 
     /**
      * Register a new event type available to be published or subscribed to
@@ -61,30 +67,60 @@ public:
     void ProcessNewSubscriptions();
 
     /**
-     * Process a new event that has been published to the EventQueue
+     * Process the next chronological event in the EventQueue
      * @return True if event handler was called successfully, false otherwise
      */
-    bool ProcessNewEvent();
+    bool ProcessNextEvent();
 
     /**
-     * Flag an event as processed
+     * Flag an event as processed. Will offload the event to the m_processedEvents vector for later storage to disk
      */
     void FlagEventAsProcessed();
 
     /**
+     * Save the processed events to disk, clears the m_processedEvents vector
+     */
+    void SaveToDisk();
+
+    /**
+     * Load the processed events from disk
+     */
+    void LoadFromDisk();
+
+    /**
      * Get the EventBus instance
-     * @return The EventBus instance
+     * @return The current EventBus instance
      */
     static EventBus *GetInstance();
 
 private:
     /**
-     * The event queue
+     * The EventBus instance
      */
-    std::vector<Event> m_eventQueue;
+    static EventBus *m_instance;
 
     /**
-     * The event handlers
+     * Available event types
+     */
+    std::vector<std::string> m_eventTypes;
+
+    /**
+     * New event subscribers that haven't been processed yet
+     */
+    std::vector<EventHandler> m_newEventSubscribers;
+
+    /**
+     * The event queue - uses a list data structure
+     */
+    std::list<Event> m_eventQueue;
+
+    /**
+     * Events already processed - offloaded from the main queue but kept in memory until stored to disk
+     */
+    std::vector<Event> m_processedEvents;
+
+    /**
+     * The event handlers map
      */
     std::map<std::string, std::vector<EventHandler>> m_eventHandlers; // redundant? Need to investigate
 
