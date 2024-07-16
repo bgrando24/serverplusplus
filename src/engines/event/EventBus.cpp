@@ -28,6 +28,7 @@ EventBus::~EventBus()
 // Dependencies: m_eventQueue, m_processedEvents, m_eventHandlers(?)
 void EventBus::Init()
 {
+
     return;
 }
 

@@ -14,6 +14,6 @@ int createSocket(){}
 
 int main()
 {
-    std::cout << "Hello World!" << std::endl;
+    std::cout << "You need to test EventBus" << std::endl;
     return 0;
 }
