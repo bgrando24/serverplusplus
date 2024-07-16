@@ -1,4 +1,5 @@
 #include "EventBus.h"
+#include <iostream>
 
 // Constructor
 // Need to use singleton pattern for EventBus, only one instance should exist
@@ -46,6 +47,21 @@ void EventBus::Publish(Event event)
     m_eventQueue.push_back(event);
 }
 
+
+// NOTES
+/*
+    Need to consider how to uniquely identify subscribers
+    If we just use the event type string as the key, when it comes to unsubscribing we may have issues
+
+    We need to set up a way to either manually define the UUID, or auto assign (maybe based on where the subscription comes from)
+    We also need a way of getting the UUID of the subscription, to use for reference in unsubscribing
+
+    Perhaps we can alter the EventHandler structure to hold the UUID, event type, and event handler callback function, 
+        that way in m_eventSubscribers the UUID is the key and the EventHandler structure is the value
+*/
+
+
+
 // Subscribe an event handler to an event type
 // Add the event handler to the m_eventHandlers map, map stores the applicable event type and handler (pointer to handler?)
 // Dependencies: m_eventHandlers, m_eventTypes
@@ -61,6 +77,7 @@ void EventBus::Subscribe(std::string type, std::function<void(Event)> callback)
     {
         // event type does not exist
         // log error
+        std::cout << "[ERROR] [EventBus::Subscribe] Event type does not exist" << std::endl;
     }
 }
 
@@ -69,6 +86,7 @@ void EventBus::Subscribe(std::string type, std::function<void(Event)> callback)
 // Dependencies: m_eventHandlers
 void EventBus::Unsubscribe(std::string type, std::function<void(Event)> callback)
 {
+    
 }
 
 // Run the event queue -> begin receiving and monitoring
