@@ -241,3 +241,29 @@ You'll notice that each component of Server++ is called an 'Engine'. This design
 <br>
 
 # Future Plans
+
+## Replay Mode
+
+Replay Mode would be a feature that allows a user to play back the events of Server++ that occurred during a given process. The analogy I'm using currently is that of Call of Duty's ["Kill Cam"](https://callofduty.fandom.com/wiki/KillCam) feature, where each input from a player is recorded, then these inputs are replayed in their specific order to produce a video-like reply of what happened.
+
+Server++ is built on an [Event-Driven Architecture](#event-driven-architecture) (EDA), so naturally events are a core part of the system already.
+
+For this to work accurately and reliably, it would depend on the events and whole functionality of Server++ being fully [deterministic](https://en.wikipedia.org/wiki/Deterministic_system). There isn't a reason to suspect that Server++ would be anything but this, however it's important to note explicitly as any deviation from a deterministic system would mean the replay feature wouldn't be reliable or accurate.
+
+At its most simple, Replay Mode will just chronologically 'replay' the events published and processed during a given Server++ process. The ideal features within this mode would be to fast-forward/rewind, pause, search for specific events, deep-dive into events, see the publishers/subscribers etc.
+
+The granularity that Replay Mode would provide will depend on how specific each event is, and what actions we attach events to. In an ideal world, every little action of Server++ would publish an event as this would provide the most detail during Replay Mode. However, performance is a key pillar of Server++ so a balance needs to be found.
+
+One thought is to simply make Replay Mode a feature that can easily be turned on or off, or even be able to configure the 'granularity' of the events that are recorded.
+
+The [Event Engine](#event-engine) and its constituents are being developed from the ground-up to support Replay Mode. Key considerations being made during development are:
+
+1. How to efficiently and accurately record events
+2. How to store these events
+3. How to retrieve and replay events
+
+For recording events, this is arguably a natural part of an EDA system as event publishing/subscribing is required anyway. Specifically for Replay Mode however, functionality for recording, storing, and retrieving events in their chronological order are being considered. The initial thought is to offload processed events to disk storage for later retrieval.
+
+## Firewall Functionality
+
+Firewalls are a key part of secure network systems. A lot more investigation about firewalls will need to be made, but this would be an ideal future feature to implement.
