@@ -7,8 +7,9 @@
  */
 struct Event
 {
-    std::string uuid;
+    int uuid;
     std::string type;
     std::any data;
     std::time_t timestamp;
+    std::string status;
 };

@@ -1,4 +1,5 @@
 #include "Event.h"
+#include "EventHandler.h"
 #include <functional>
 #include <map>
 #include <list>
@@ -17,13 +18,6 @@ public:
      * Destructor
      */
     ~EventBus();
-
-    /**
-     * The EventHandler is a callback function that is called in response to an appropriate event.
-     *
-     * @param event The event that triggered the callback
-     */
-    using EventHandler = std::function<void(const Event &)>;
 
     /**
      * Initialize the EventBus, setup the event queue and event handlers
@@ -46,15 +40,17 @@ public:
      * Subscribe to an event type
      * @param type The type of event to subscribe to
      * @param callback The callback function to call when the event is published
+     * @return True if the event handler was successfully subscribed, false otherwise
      */
-    void Subscribe(std::string type, std::function<void(Event)> callback);
+    bool Subscribe(std::string subscribedEvenType, std::function<void(Event)> callback);
 
     /**
      * Unsubscribe from an event
      * @param type The type of event to unsubscribe from
      * @param callback The callback function to unsubscribe
+     * @return True if the event handler was successfully unsubscribed, false otherwise
      */
-    void Unsubscribe(std::string type, std::function<void(Event)> callback);
+    bool Unsubscribe(std::string eventHandlerUUID);
 
     /**
      * Run the event queue
@@ -68,14 +64,15 @@ public:
 
     /**
      * Process the next chronological event in the EventQueue
-     * @return True if event handler was called successfully, false otherwise
+     * @return The numerical UUID if an event was processed, 0 if no events to process, -1 if an error occurred
      */
-    bool ProcessNextEvent();
+    int ProcessNextEvent();
 
     /**
      * Flag an event as processed. Will offload the event to the m_processedEvents vector for later storage to disk
+     * @param eventId The UUID of the event to flag as processed
      */
-    void FlagEventAsProcessed();
+    void FlagEventAsProcessed(int eventId);
 
     /**
      * Save the processed events to disk, clears the m_processedEvents vector
