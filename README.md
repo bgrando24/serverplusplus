@@ -244,7 +244,7 @@ You'll notice that each component of Server++ is called an 'Engine'. This design
 
 ## Replay Mode
 
-Replay Mode would be a feature that allows a user to play back the events of Server++ that occurred during a given process. The analogy I'm using currently is that of Call of Duty's ["Kill Cam"](https://callofduty.fandom.com/wiki/KillCam) feature, where each input from a player is recorded, then these inputs are replayed in their specific order to produce a video-like reply of what happened.
+Replay Mode would be a feature that allows a user to play back the events of Server++ that occurred during a given process. The analogy I'm using currently is that of Call of Duty's ["Kill Cam"](https://callofduty.fandom.com/wiki/KillCam) feature, where each input from a player is recorded and these inputs are replayed in their specific order to produce a video-like reply of what happened.
 
 Server++ is built on an [Event-Driven Architecture](#event-driven-architecture) (EDA), so naturally events are a core part of the system already.
 
