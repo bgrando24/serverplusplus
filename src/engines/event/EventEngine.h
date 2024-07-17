@@ -1,3 +1,5 @@
+#ifndef EVENTENGINE_H
+#define EVENTENGINE_H
 
 /**
  * @brief The EventEngine class is responsible for managing the Event-Driven Architecture system in Server++
@@ -36,3 +38,5 @@ public:
      */
     static EventEngine *GetInstance();
 };
+
+#endif // EVENTENGINE_H

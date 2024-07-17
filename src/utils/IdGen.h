@@ -1,3 +1,6 @@
+#ifndef IDGEN_H
+#define IDGEN_H
+
 #include <string>
 /**
  * IdGen is a utility class that generates unique ids of varying lengths or requirements for UUIDs.
@@ -40,3 +43,5 @@ public:
         return id;
     }
 };
+
+#endif // IDGEN_H

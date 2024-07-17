@@ -1,6 +1,15 @@
 #include "EventBus.h"
 #include "EventHandler.h"
 #include <iostream>
+#include <algorithm>
+#include <unistd.h>
+
+// Enforces singleton pattern for EventBus
+EventBus &EventBus::GetInstance()
+{
+    static EventBus instance; // Guaranteed to be destroyed. Instantiated on first use.
+    return instance;
+}
 
 // Constructor
 // Need to use singleton pattern for EventBus, only one instance should exist
@@ -9,9 +18,6 @@
 EventBus::EventBus()
 {
     // DiskIO Utility reference
-
-    // set instance
-    m_instance = this;
 }
 
 // Destructor
@@ -28,7 +34,8 @@ EventBus::~EventBus()
 // Dependencies: m_eventQueue, m_processedEvents, m_eventHandlers(?)
 void EventBus::Init()
 {
-
+    // debugging
+    std::cout << "[INFO] [EventBus::Init] Initialising EventBus" << std::endl;
     return;
 }
 
@@ -36,6 +43,8 @@ void EventBus::Init()
 // Dependencies: m_eventTypes map
 void EventBus::RegisterNewEvent(std::string type)
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::RegisterNewEvent] Registering new event type: " << type << std::endl;
     // add event type to m_eventTypes vector
     m_eventTypes.push_back(type);
 }
@@ -45,36 +54,33 @@ void EventBus::RegisterNewEvent(std::string type)
 // Dependencies: m_eventQueue
 void EventBus::Publish(Event event)
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::Publish] Publishing event: " << event.type << std::endl;
+
     // push event to m_eventQueue
     m_eventQueue.push_back(event);
 }
-
-// NOTES
-/*
-    Need to consider how to uniquely identify subscribers
-    If we just use the event type string as the key, when it comes to unsubscribing we may have issues
-
-    We need to set up a way to either manually define the UUID, or auto assign (maybe based on where the subscription comes from)
-    We also need a way of getting the UUID of the subscription, to use for reference in unsubscribing
-
-    Perhaps we can alter the EventHandler structure to hold the UUID, event type, and event handler callback function,
-        that way in m_eventSubscribers the UUID is the key and the EventHandler structure is the value
-*/
 
 // Subscribe an event handler to an event type
 // Add the event handler to the m_eventHandlers map, map stores the applicable event type and handler (pointer to handler?)
 // Dependencies: m_eventHandlers, m_eventTypes
 bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Event)> callback)
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::Subscribe] Subscribing to event type: " << subscribedEvenType << std::endl;
     // check if event type exists
     if (std::find(m_eventTypes.begin(), m_eventTypes.end(), subscribedEvenType) != m_eventTypes.end())
     {
+        // debugging
+        std::cout << "[INFO] [EventBus::Subscribe] Event type " << subscribedEvenType << " exists, building event handler" << std::endl;
         // build new EventHandler
         EventHandler handler = EventHandler(subscribedEvenType, callback);
 
         // add event handler to m_eventHandlers map, use type as key, return true if successful
         try
         {
+            // debugging
+            std::cout << "[INFO] [EventBus::Subscribe] Adding event handler to m_eventHandlers map" << std::endl;
             m_eventHandlers[subscribedEvenType].push_back(handler);
             return true;
         }
@@ -87,8 +93,8 @@ bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Even
     else
     {
         // event type does not exist
-        // log error
         std::cout << "[ERROR] [EventBus::Subscribe] Event type does not exist" << std::endl;
+        return false;
     }
 }
 
@@ -97,6 +103,8 @@ bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Even
 // Dependencies: m_eventHandlers
 bool EventBus::Unsubscribe(std::string eventHandlerUUID)
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::Unsubscribe] Unsubscribing event handler: " << eventHandlerUUID << std::endl;
     // find event handler in m_eventHandlers map and remove if exists
     for (auto &eventHandler : m_eventHandlers)
     {
@@ -104,6 +112,8 @@ bool EventBus::Unsubscribe(std::string eventHandlerUUID)
         {
             if (it->uuid == eventHandlerUUID)
             {
+                // debugging
+                std::cout << "[INFO] [EventBus::Unsubscribe] Event handler found, removing: " << eventHandlerUUID << std::endl;
                 // remove event handler
                 eventHandler.second.erase(it);
                 return true;
@@ -117,6 +127,8 @@ bool EventBus::Unsubscribe(std::string eventHandlerUUID)
             }
         }
     }
+    // event handler not found
+    return false;
 }
 
 // Run the event queue -> begin receiving and monitoring
@@ -130,9 +142,13 @@ void EventBus::RunQueue()
     {
         // process new event subscriptions
         ProcessNewSubscriptions();
+        // pause for a second
+        sleep(1);
 
         // process next event in queue
         int eventId = ProcessNextEvent();
+        // pause for a second
+        sleep(1);
         if (eventId > 0)
         {
             // flag event as processed
@@ -148,9 +164,13 @@ void EventBus::RunQueue()
 // Dependencies: m_newEventSubscribers
 void EventBus::ProcessNewSubscriptions()
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::ProcessNewSubscriptions] Processing new event subscriptions" << std::endl;
     // loop through new event subscriptions
     for (auto &subscription : m_newEventSubscribers)
     {
+        // debugging
+        std::cout << "[INFO] [EventBus::ProcessNewSubscriptions] New subscriber found. Subscribing to event type: " << subscription.type << std::endl;
         // subscribe event handler
         EventBus::Subscribe(subscription.type, subscription.callback);
     }
@@ -164,11 +184,15 @@ void EventBus::ProcessNewSubscriptions()
 // Dependencies: m_eventQueue, m_eventHandlers, m_processedEvents
 int EventBus::ProcessNextEvent()
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::ProcessNextEvent] Processing next event" << std::endl;
     try
     {
         // check if event queue is empty
         if (m_eventQueue.empty())
         {
+            // debugging
+            std::cout << "[INFO] [EventBus::ProcessNextEvent] No events in queue" << std::endl;
             // no events in queue
             return 0;
         }
@@ -181,6 +205,8 @@ int EventBus::ProcessNextEvent()
         {
             if (eventHandler.first == event.type)
             {
+                // debugging
+                std::cout << "[INFO] [EventBus::ProcessNextEvent] Event handler found for event type: " << event.type << std::endl;
                 // call event handler
                 for (auto &handler : eventHandler.second)
                 {
@@ -191,6 +217,8 @@ int EventBus::ProcessNextEvent()
                 return event.uuid;
             }
         }
+        // no event handler found
+        return -1;
     }
     catch (const std::exception &e)
     {
@@ -204,11 +232,15 @@ int EventBus::ProcessNextEvent()
 // Dependencies: result from ProcessNextEvent, m_eventQueue, m_processedEvents
 void EventBus::FlagEventAsProcessed(int eventId)
 {
+    // debugging
+    std::cout << "[INFO] [EventBus::FlagEventAsProcessed] Flagging event as processed: " << eventId << std::endl;
     // find event in event queue
     for (auto e = m_eventQueue.begin(); e != m_eventQueue.end(); ++e)
     {
         if (e->uuid == eventId)
         {
+            // debugging
+            std::cout << "[INFO] [EventBus::FlagEventAsProcessed] Event handler UUID matched, flagging as processed" << std::endl;
             // flag event status as processed
             e->status = "PROCESSED_SUCCESSFUL";
 
@@ -235,11 +267,4 @@ void EventBus::SaveToDisk()
 // Dependencies: DiskIO utility
 void EventBus::LoadFromDisk()
 {
-}
-
-// Get the instance of the EventBus -> singleton pattern
-// Return the instance of the EventBus
-EventBus *EventBus::GetInstance()
-{
-    return m_instance;
 }

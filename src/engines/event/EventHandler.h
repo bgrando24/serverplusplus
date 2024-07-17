@@ -1,3 +1,6 @@
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H
+
 #include "Event.h"
 #include <string>
 #include <functional>
@@ -31,3 +34,5 @@ struct EventHandler
     EventHandler(std::string type, std::function<void(Event)> callback)
         : type(type), callback(callback) {}
 };
+
+#endif // EVENTHANDLER_H

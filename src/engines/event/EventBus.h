@@ -1,3 +1,6 @@
+#ifndef EVENTBUS_H
+#define EVENTBUS_H
+
 #include "Event.h"
 #include "EventHandler.h"
 #include <functional>
@@ -9,10 +12,15 @@
 class EventBus
 {
 public:
+    // Delete copy constructor and copy assignment operator
+    EventBus(const EventBus &) = delete;
+    EventBus &operator=(const EventBus &) = delete;
+
     /**
-     * Constructor
+     * Get the EventBus instance
+     * @return The current EventBus instance
      */
-    EventBus();
+    static EventBus &GetInstance();
 
     /**
      * Destructor
@@ -84,13 +92,12 @@ public:
      */
     void LoadFromDisk();
 
-    /**
-     * Get the EventBus instance
-     * @return The current EventBus instance
-     */
-    static EventBus *GetInstance();
-
 private:
+    /**
+     * Constructor - Private to enforce Singleton pattern
+     */
+    EventBus();
+
     /**
      * The EventBus instance
      */
@@ -126,3 +133,5 @@ private:
      */
     std::map<std::string, std::vector<EventHandler>> m_eventSubscribers;
 };
+
+#endif // EVENTBUS_H

@@ -1,3 +1,5 @@
+#include "./engines/event/EventBus.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -9,11 +11,20 @@
 #include <netdb.h>
 
 // -------------------- Create a server socket --------------------
-int createSocket(){}
-
+int createSocket() { return -1; }
 
 int main()
 {
-    std::cout << "You need to test EventBus" << std::endl;
+    std::cout << "Testing the EventBus" << std::endl;
+
+    // get eventbus instance
+    EventBus &eventBus = EventBus::GetInstance();
+    // initialise
+    eventBus.Init();
+    // register test events
+    eventBus.RegisterNewEvent("test_event");
+    eventBus.RegisterNewEvent("test_event2");
+
+    eventBus.RunQueue();
     return 0;
 }

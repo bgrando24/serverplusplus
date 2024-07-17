@@ -1,3 +1,6 @@
+#ifndef EVENT_H
+#define EVENT_H
+
 #include <string>
 #include <any>
 /**
@@ -10,6 +13,8 @@ struct Event
     int uuid;
     std::string type;
     std::any data;
-    std::time_t timestamp;
+    long timestamp;
     std::string status;
 };
+
+#endif // EVENT_H
