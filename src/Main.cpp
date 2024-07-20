@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <thread>   // multi-threading
 
 // -------------------- Create a server socket --------------------
 int createSocket() { return -1; }
@@ -21,10 +22,9 @@ int main()
     EventBus &eventBus = EventBus::GetInstance();
     // initialise
     eventBus.Init();
-    // register test events
-    eventBus.RegisterNewEvent("test_event");
-    eventBus.RegisterNewEvent("test_event2");
 
-    eventBus.RunQueue();
+    // multithreading
+    std::thread eventBusThread(&EventBus::RunQueue, &eventBus);
+    
     return 0;
 }
