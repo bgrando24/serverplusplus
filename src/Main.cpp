@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <thread>   // multi-threading
+#include <thread> // multi-threading
 
 // -------------------- Create a server socket --------------------
 int createSocket() { return -1; }
@@ -25,6 +25,15 @@ int main()
 
     // multithreading
     std::thread eventBusThread(&EventBus::RunQueue, &eventBus);
-    
+    eventBusThread.join();
+
+    std::thread mainThread([]()
+                           {
+        while (true) {
+        std::cout << "Main thread" << std::endl;
+        sleep(1);
+        } });
+    mainThread.join();
+
     return 0;
 }
