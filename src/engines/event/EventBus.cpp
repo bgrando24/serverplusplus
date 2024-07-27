@@ -86,7 +86,7 @@ bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Even
         }
         catch (const std::exception &e)
         {
-            std::cerr << e.what() << '\n';
+            std::cerr << "[ERROR] [EventBus::Subscribe] - " << e.what() << '\n';
             return false;
         }
     }
@@ -214,15 +214,17 @@ int EventBus::ProcessNextEvent()
                 }
 
                 // event processed, return event UUID
+                std::cout << "[INFO] [EventBus::ProcessNextEvent] Event processed successfully" << std::endl;
                 return event.uuid;
             }
         }
         // no event handler found
+        std::cout << "[ERROR] [EventBus::ProcessNextEvent] No event handler found for event type: " << event.type << std::endl;
         return -1;
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
+        std::cerr << "[ERROR] [EventBus::ProcessNextEvent] - " << e.what() << '\n';
         return -1;
     }
 }
