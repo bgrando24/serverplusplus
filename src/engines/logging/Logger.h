@@ -34,7 +34,7 @@ class Logger
      * @param message The message to log
      * @param level The log level of the message - default is INFO
      */
-    void Log(const std::string &message, LogLevel level = LogLevel::INFO);
+    void Log(const std::string &message, LogLevel level = LogLevel::INFO, const std::string &functionName = "");
 
     /**
      * @brief Set the log file to write log messages to
@@ -94,5 +94,10 @@ class Logger
      */
     std::string GetLogLevelString(LogLevel level);
 };
+
+/**
+ * @brief Macro to log messages with the current function name
+ */
+#define LOG(message, level) Logger::GetInstance().Log(message, level, __FUNCTION__)
 
 #endif // LOGGER_H

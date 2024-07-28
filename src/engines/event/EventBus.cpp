@@ -1,5 +1,6 @@
 #include "EventBus.h"
 #include "EventHandler.h"
+#include "../../engines/logging/Logger.h"
 #include <iostream>
 #include <algorithm>
 #include <unistd.h>
@@ -35,7 +36,8 @@ EventBus::~EventBus()
 void EventBus::Init()
 {
     // debugging
-    std::cout << "[INFO] [EventBus::Init] Initialising EventBus" << std::endl;
+    // std::cout << "[INFO] [EventBus::Init] Initialising EventBus" << std::endl;
+    LOG("Initialising", DEBUG);
     return;
 }
 
