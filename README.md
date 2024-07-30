@@ -180,9 +180,96 @@ The Async Process Engine is responsible for managing the logic behind multithrea
 
 ## Event Engine
 
-The Event Engine implements the specifics of [Event-Driven Architecture](#event-driven-architecture) in Server++, such as event queuing and the publishing/subscribing process.
+The Event Engine implements the specifics of [Event-Driven Architecture](#event-driven-architecture) in Server++, such as event queuing and the publishing/subscribing process. The event engine implements a singleton pattern, as only one event bus should be running for a Server++ instance. 
+
+### Events
+Events in Server++ are any action that happens within the program, which can also be published and/or subscribed to by other areas of the system. 
+
+The official definition of an 'Event' in Server++ is:
+>A discrete, significant occurrence within Server++, represented as an object containing data about the occurrence, that triggers specific actions or responses from registered handlers.
 
 ### Event Bus
+The Event Bus (EventBus.h) system oversees the event queue process and its supporting functionality. 
+
+<br/>
+
+```cpp
+EventBus::EventBus()
+```
+The constructor initiates the DiskIO Utility (TBA) Class to provide the functionality related to dumping the event queue to disk on destruction of the EventBus instance.
+<br/>
+<br/>
+
+```cpp
+EventBus::~EventBus()
+```
+The destructor calls SaveToDisk() utility (TBA) to ensure the event queue record is saved before the Event Bus instance is destroyed.
+<br/>
+<br/>
+
+```cpp
+void EventBus::Init()
+```
+Not yet used, TBA whether redundant or not.
+<br/>
+<br/>
+
+```cpp
+void EventBus::RegisterNewEvent(std::string type)
+```
+Registers a new [Event](#events) to the m_eventTypes map data structure.
+<br/>
+<br/>
+
+```cpp
+void EventBus::Publish(Event event)
+```
+Publishes a new occurrence of an event to the (m_eventQueue)[#event-queue].
+<br/>
+<br/>
+
+```cpp
+bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Event)> callback)
+```
+Subscribes an (Event Handler)[#event-handlers] to a specific event type, registered in m_eventHandlers.
+<br/>
+<br/>
+
+```cpp
+bool EventBus::Unsubscribe(std::string eventHandlerUUID)
+```
+Unsubscribes an event handler from an event type. The event handler is removed from m_eventHandlers.
+<br/>
+<br/>
+
+```cpp
+void EventBus::RunQueue()
+```
+Begins and runs the (Event Queue)[#event-queue] process
+<br/>
+<br/>
+
+```cpp
+void EventBus::ProcessNewSubscriptions()
+```
+Checks for any new incoming event subscribers (found in m_newEventSubscribers) and adds them to m_eventHandlers.
+<br/>
+<br/>
+
+```cpp
+int EventBus::ProcessNextEvent()
+```
+calls the handler for the next event in the event queue.
+<br/>
+<br/>
+
+```cpp
+void EventBus::FlagEventAsProcessed(int eventId)
+```
+Flags an event in the event queue as processed, if the event handler was successfully called. The Event->status member is changed to "PROCESSED_SUCCESSFUL" and the event is moved out of m_eventQueue and to m_processedEvents.
+<br/>
+<br/>
+
 
 ### Event Queue
 
@@ -190,7 +277,7 @@ The Event Engine implements the specifics of [Event-Driven Architecture](#event-
 
 ### Event Subscribers
 
-### Event Handles
+### Event Handlers
 
 ## Dependency Injection Engine
 
