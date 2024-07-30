@@ -7,6 +7,7 @@
 // Enforces singleton pattern for EventBus
 EventBus &EventBus::GetInstance()
 {
+    std::cout << "[INFO] [EventBus::GetInstance] EventBus instance created" << std::endl;
     static EventBus instance; // Guaranteed to be destroyed. Instantiated on first use.
     return instance;
 }
