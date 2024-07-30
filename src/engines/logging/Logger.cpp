@@ -6,13 +6,13 @@ Logger &Logger::GetInstance()
     return instance;
 }
 
-void Logger::Log(const std::string &message, LogLevel level, const std::string &functionName = "")
+void Logger::Log(const std::string &message, LogLevel level, const std::string &functionName)
 {
-    if (level < logLevel)
-        return;
+    // if (level < logLevel)
+    //     return;
 
     std::lock_guard<std::mutex> lock(logMutex);
-    std::string logMessage = GetLogLevelString(level) + ": " + (functionName.empty() ? "" : functionName + " - ") + message;
+    std::string logMessage = "[" + GetLogLevelString(level) + "]: " + (functionName.empty() ? "" : "[" + functionName + "] - ") + message;
 
     if (logFile.is_open())
     {

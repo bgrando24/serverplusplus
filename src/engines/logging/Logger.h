@@ -22,7 +22,7 @@ enum LogLevel
  */
 class Logger
 {
-    public:
+public:
     /**
      * @brief Get the Logger class instance
      */
@@ -30,7 +30,7 @@ class Logger
 
     /**
      * @brief Log a message to the console and to the log file
-     * 
+     *
      * @param message The message to log
      * @param level The log level of the message - default is INFO
      */
@@ -38,19 +38,19 @@ class Logger
 
     /**
      * @brief Set the log file to write log messages to
-     * 
+     *
      * @param fileName The name of the log file
      */
     void SetLogFile(const std::string &fileName);
 
     /**
      * @brief Set the log level of the logger
-     * 
+     *
      * @param level The log level to set
      */
     void SetLogLevel(LogLevel level);
 
-    private:
+private:
     /**
      * @brief Private constructor to enforce singleton pattern
      */
@@ -88,7 +88,7 @@ class Logger
 
     /**
      * @brief Get the log level string representation
-     * 
+     *
      * @param level The log level
      * @return std::string The log level string representation
      */

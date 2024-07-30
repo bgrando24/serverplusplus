@@ -1,5 +1,6 @@
 #include "./engines/event/EventBus.h"
 #include "./engines/event/EventHandler.h"
+#include "engines/logging/Logger.h"
 
 #include <iostream>
 #include <cstdlib>
