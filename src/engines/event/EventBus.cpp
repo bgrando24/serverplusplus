@@ -1,5 +1,6 @@
 #include "EventBus.h"
 #include "EventHandler.h"
+#include "../../engines/logging/Logger.h"
 #include <iostream>
 #include <algorithm>
 #include <unistd.h>
@@ -36,7 +37,8 @@ EventBus::~EventBus()
 void EventBus::Init()
 {
     // debugging
-    std::cout << "[INFO] [EventBus::Init] Initialising EventBus" << std::endl;
+    // std::cout << "[INFO] [EventBus::Init] Initialising EventBus" << std::endl;
+    LOG("Initialising", DEBUG);
     return;
 }
 
@@ -45,7 +47,7 @@ void EventBus::Init()
 void EventBus::RegisterNewEvent(std::string type)
 {
     // debugging
-    std::cout << "[INFO] [EventBus::RegisterNewEvent] Registering new event type: " << type << std::endl;
+    LOG("Registering new event type: " + type, INFO);
     // add event type to m_eventTypes vector
     m_eventTypes.push_back(type);
 }
@@ -56,7 +58,7 @@ void EventBus::RegisterNewEvent(std::string type)
 void EventBus::Publish(Event event)
 {
     // debugging
-    std::cout << "[INFO] [EventBus::Publish] Publishing event: " << event.type << std::endl;
+    LOG("Publishing new event: " + std::to_string(event.uuid), INFO);
 
     // push event to m_eventQueue
     m_eventQueue.push_back(event);
@@ -68,12 +70,12 @@ void EventBus::Publish(Event event)
 bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Event)> callback)
 {
     // debugging
-    std::cout << "[INFO] [EventBus::Subscribe] Subscribing to event type: " << subscribedEvenType << std::endl;
+    LOG("Subscribing to event type: " + subscribedEvenType, DEBUG);
     // check if event type exists
     if (std::find(m_eventTypes.begin(), m_eventTypes.end(), subscribedEvenType) != m_eventTypes.end())
     {
         // debugging
-        std::cout << "[INFO] [EventBus::Subscribe] Event type " << subscribedEvenType << " exists, building event handler" << std::endl;
+        LOG("Event type exists, subscribing to " + subscribedEvenType, INFO);
         // build new EventHandler
         EventHandler handler = EventHandler(subscribedEvenType, callback);
 
@@ -81,20 +83,20 @@ bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Even
         try
         {
             // debugging
-            std::cout << "[INFO] [EventBus::Subscribe] Adding event handler to m_eventHandlers map" << std::endl;
+            LOG("Event handler " + handler.uuid + "added to m_eventHandlers", INFO);
             m_eventHandlers[subscribedEvenType].push_back(handler);
             return true;
         }
         catch (const std::exception &e)
         {
-            std::cerr << "[ERROR] [EventBus::Subscribe] - " << e.what() << '\n';
+            LOG("Error adding event handler to m_eventHandlers: " + (std::string)e.what(), ERROR);
             return false;
         }
     }
     else
     {
         // event type does not exist
-        std::cout << "[ERROR] [EventBus::Subscribe] Event type does not exist" << std::endl;
+        LOG("Event type " + subscribedEvenType + " does not exist", WARN);
         return false;
     }
 }
@@ -105,7 +107,8 @@ bool EventBus::Subscribe(std::string subscribedEvenType, std::function<void(Even
 bool EventBus::Unsubscribe(std::string eventHandlerUUID)
 {
     // debugging
-    std::cout << "[INFO] [EventBus::Unsubscribe] Unsubscribing event handler: " << eventHandlerUUID << std::endl;
+    LOG("Unsubscribing event handler: " + eventHandlerUUID, DEBUG);
+
     // find event handler in m_eventHandlers map and remove if exists
     for (auto &eventHandler : m_eventHandlers)
     {
@@ -114,7 +117,7 @@ bool EventBus::Unsubscribe(std::string eventHandlerUUID)
             if (it->uuid == eventHandlerUUID)
             {
                 // debugging
-                std::cout << "[INFO] [EventBus::Unsubscribe] Event handler found, removing: " << eventHandlerUUID << std::endl;
+                LOG("Event handler " + eventHandlerUUID + " found, removing from m_eventHandlers", INFO);
                 // remove event handler
                 eventHandler.second.erase(it);
                 return true;
@@ -123,7 +126,7 @@ bool EventBus::Unsubscribe(std::string eventHandlerUUID)
             {
                 // event handler not found
                 // log error
-                std::cout << "[ERROR] [EventBus::Unsubscribe] Event handler not found" << std::endl;
+                LOG("Event handler " + eventHandlerUUID + " not found in m_eventHandlers", WARN);
                 return false;
             }
         }
@@ -166,12 +169,12 @@ void EventBus::RunQueue()
 void EventBus::ProcessNewSubscriptions()
 {
     // debugging
-    std::cout << "[INFO] [EventBus::ProcessNewSubscriptions] Processing new event subscriptions" << std::endl;
+    LOG("Processing new event subscriptions", DEBUG);
     // loop through new event subscriptions
     for (auto &subscription : m_newEventSubscribers)
     {
         // debugging
-        std::cout << "[INFO] [EventBus::ProcessNewSubscriptions] New subscriber found. Subscribing to event type: " << subscription.type << std::endl;
+        LOG("New subscriber found. Subscribing to event type: " + subscription.type, INFO);
         // subscribe event handler
         EventBus::Subscribe(subscription.type, subscription.callback);
     }
@@ -186,14 +189,14 @@ void EventBus::ProcessNewSubscriptions()
 int EventBus::ProcessNextEvent()
 {
     // debugging
-    std::cout << "[INFO] [EventBus::ProcessNextEvent] Processing next event" << std::endl;
+    LOG("Processing next event in queue", DEBUG);
     try
     {
         // check if event queue is empty
         if (m_eventQueue.empty())
         {
             // debugging
-            std::cout << "[INFO] [EventBus::ProcessNextEvent] No events in queue" << std::endl;
+            LOG("No events in queue", INFO);
             // no events in queue
             return 0;
         }
@@ -207,7 +210,7 @@ int EventBus::ProcessNextEvent()
             if (eventHandler.first == event.type)
             {
                 // debugging
-                std::cout << "[INFO] [EventBus::ProcessNextEvent] Event handler found for event type: " << event.type << std::endl;
+                LOG("Event handler found for event type: " + event.type, INFO);
                 // call event handler
                 for (auto &handler : eventHandler.second)
                 {
@@ -215,17 +218,17 @@ int EventBus::ProcessNextEvent()
                 }
 
                 // event processed, return event UUID
-                std::cout << "[INFO] [EventBus::ProcessNextEvent] Event processed successfully" << std::endl;
+                LOG("Event processed successfully", INFO);
                 return event.uuid;
             }
         }
         // no event handler found
-        std::cout << "[ERROR] [EventBus::ProcessNextEvent] No event handler found for event type: " << event.type << std::endl;
+        LOG("No event handler found for event type: " + event.type, WARN);
         return -1;
     }
     catch (const std::exception &e)
     {
-        std::cerr << "[ERROR] [EventBus::ProcessNextEvent] - " << e.what() << '\n';
+        LOG("Error processing next event: " + (std::string)e.what(), ERROR);
         return -1;
     }
 }
@@ -236,14 +239,14 @@ int EventBus::ProcessNextEvent()
 void EventBus::FlagEventAsProcessed(int eventId)
 {
     // debugging
-    std::cout << "[INFO] [EventBus::FlagEventAsProcessed] Flagging event as processed: " << eventId << std::endl;
+    LOG("Flagging event as processed: " + std::to_string(eventId), DEBUG);
     // find event in event queue
     for (auto e = m_eventQueue.begin(); e != m_eventQueue.end(); ++e)
     {
         if (e->uuid == eventId)
         {
             // debugging
-            std::cout << "[INFO] [EventBus::FlagEventAsProcessed] Event handler UUID matched, flagging as processed" << std::endl;
+            LOG("Event handler UUID matched, flagging as processed", INFO);
             // flag event status as processed
             e->status = "PROCESSED_SUCCESSFUL";
 
