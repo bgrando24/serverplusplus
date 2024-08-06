@@ -64,7 +64,7 @@ int main()
             Event event;
             event.uuid = randomNumber;
             event.type = "random";
-            event.data = "This is a random event";
+            event.data = std::string("This is a random event");
             event.timestamp = time(0);
             event.status = "pending";
 
