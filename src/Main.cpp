@@ -69,8 +69,9 @@ int main()
             event.status = "pending";
 
             eventBus.Publish(event);
+            
+        LOG("New random event published", DEBUG);
         }
-        std::cout << "New random event published" << std::endl;
         sleep(2);
         } });
     mainThread.join(); // join means the main thread will wait for this thread to finish
