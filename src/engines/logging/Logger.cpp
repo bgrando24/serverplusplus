@@ -8,8 +8,8 @@ Logger &Logger::GetInstance()
 
 void Logger::Log(const std::string &message, LogLevel level, const std::string &functionName)
 {
-    // if (level < logLevel)
-    //     return;
+    if (level < this->logLevel)
+        return;
 
     std::lock_guard<std::mutex> lock(logMutex);
     std::string logMessage = "[" + GetLogLevelString(level) + "]: " + (functionName.empty() ? "" : "[" + functionName + "] - ") + message;
@@ -37,6 +37,7 @@ void Logger::SetLogFile(const std::string &filename)
 void Logger::SetLogLevel(LogLevel level)
 {
     logLevel = level;
+    std::cout << "Log level set to " << GetLogLevelString(level) << std::endl;
 }
 
 Logger::~Logger()

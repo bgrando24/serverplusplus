@@ -8,6 +8,7 @@ The Server++ framework provides important core features such as HTTP request/res
 
 1. [Getting Started](#getting-started)
 2. [About Server++](#about-server++)
+3. Command Line Arguments
 3. [Features](#features)
    - [Core Services Engine](#core-services-engine)
    - [Cryptography Engine](#cryptography-engine)
