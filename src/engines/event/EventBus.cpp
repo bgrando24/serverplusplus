@@ -238,23 +238,22 @@ int EventBus::ProcessNextEvent()
 // Dependencies: result from ProcessNextEvent, m_eventQueue, m_processedEvents
 void EventBus::FlagEventAsProcessed(int eventId)
 {
-    // debugging
     LOG("Flagging event as processed: " + std::to_string(eventId), DEBUG);
-    // find event in event queue
-    for (auto e = m_eventQueue.begin(); e != m_eventQueue.end(); ++e)
+    for (auto e = m_eventQueue.begin(); e != m_eventQueue.end();)
     {
         if (e->uuid == eventId)
         {
-            // debugging
             LOG("Event handler UUID matched, flagging as processed", INFO);
-            // flag event status as processed
             e->status = "PROCESSED_SUCCESSFUL";
-
-            // add event to processed events
             m_processedEvents.push_back(*e);
 
-            // remove event from event queue
+            // Erase returns the next iterator, but since we're breaking, we don't use it
             m_eventQueue.erase(e);
+            break; // Exit the loop after modifying the container
+        }
+        else
+        {
+            ++e; // Only increment if not erasing, to avoid skipping elements
         }
     }
 }

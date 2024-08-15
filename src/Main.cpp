@@ -1,6 +1,7 @@
 #include "./engines/event/EventBus.h"
 #include "./engines/event/EventHandler.h"
 #include "engines/logging/Logger.h"
+#include "utils/IdGen.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -31,7 +32,7 @@ int main()
     // build event handler
     EventHandler randomEventHandler("random", [](Event event)
                                     {
-        std::cout << "Received new random event" << std::endl;
+        std::cout << "\nNew random event handler called\n" << std::endl;
         std::cout << "Event UUID: " << event.uuid << std::endl;
         std::cout << "Event Type: " << event.type << std::endl;
         std::cout << "Event Data: " << std::any_cast<std::string>(event.data) << std::endl;
@@ -58,7 +59,7 @@ int main()
                            {
         while (true) {
         // randomly publish event
-        int randomNumber = rand(); // generate a random number
+        int randomNumber = std::stoi(IdGen::GetNumId(8)); // generate a random number
 
         if (randomNumber % 2 == 0) {
             Event event;
