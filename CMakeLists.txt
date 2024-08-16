@@ -1,9 +1,26 @@
 cmake_minimum_required(VERSION 3.10)
-project(ServerPP)
+project(ServerPlusPlus)
 
+# Specify C++ Standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Ensure build directory is used for binary output
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# Add all source files
+set(SOURCES
+    src/Main.cpp
+    src/utils/ArgumentHandler.cpp
+    src/engines/event/EventBus.cpp
+    src/engines/event/EventHandler.cpp
+    src/engines/logging/Logger.cpp
+    src/utils/IdGen.h
+    # Add other source files here
+)
 
-add_executable(serverplusplus src/main.cpp)
+# Add executables
+add_executable(serverplusplus ${SOURCES})
+
+# Include directories
+target_include_directories(serverplusplus PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+# Set the output directory for executables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

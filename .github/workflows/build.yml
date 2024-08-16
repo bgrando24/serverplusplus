@@ -1,0 +1,49 @@
+# This is a very basic build script to test the program can compile an executable and run it
+name: Test Server++ can build and execute
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up C++ Compiler
+      run: sudo apt-get install -y g++
+
+    - name: Build Server++
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+
+    - name: Start Server++ in background
+      run: |
+        ./build/serverplusplus &   # Start the server in the background
+        echo "SERVER_PID=$!" >> $GITHUB_ENV  # Save the process ID to an environment variable
+
+    - name: Wait for Server++ to start
+      run: sleep 10  # Wait for a few seconds to give the server time to start
+
+    - name: Check Server++ is running
+      run: |
+        if ps -p $SERVER_PID > /dev/null
+        then
+          echo "Server++ started successfully"
+        else
+          echo "Server++ failed to start"
+          exit 1
+        fi
+
+    - name: Kill server
+      run: kill $SERVER_PID

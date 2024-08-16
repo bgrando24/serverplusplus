@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y \
 # Build the application
 RUN cmake -S . -B build && cmake --build build
 
-# Debug: list files in build and build/bin after build
-RUN ls -la build && ls -la build/bin
+# Debug: list files in build after build
+RUN ls -la build
 
 # Use a smaller image for the runtime
 FROM gcc:latest
@@ -24,8 +24,13 @@ FROM gcc:latest
 # Set the working directory
 WORKDIR /src
 
+# Install the necessary libraries
+RUN apt-get update && apt-get install -y \
+    libstdc++6 \
+    libssl-dev
+
 # Copy the built binary from the builder stage
-COPY --from=builder /src/build/bin/serverplusplus /usr/local/bin/serverplusplus
+COPY --from=builder /src/build/serverplusplus /usr/local/bin/serverplusplus
 
 # Expose the necessary ports
 EXPOSE 8080
