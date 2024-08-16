@@ -1,6 +1,5 @@
-name: Build and Test Server++
+name: Test Server++ can build and execute
 
-# Trigger the workflow on pull requests and pushes to main branch
 on:
   pull_request:
     branches:
@@ -20,12 +19,30 @@ jobs:
     - name: Set up C++ Compiler
       run: sudo apt-get install -y g++
 
-    - name: Build project
+    - name: Build Server++
       run: |
         mkdir build
         cd build
         cmake ..
         make
 
-    - name: Run tests
-      run: ./build/serverplusplus
+    - name: Start Server++ in background
+      run: |
+        ./build/serverplusplus &   # Start the server in the background
+        SERVER_PID=$!                    # Save the process ID
+
+    - name: Wait for Server++ to start
+      run: sleep 10  # Wait for a few seconds to give the server time to start
+
+    - name: Check Server++ is running
+      run: |
+        if ps -p $SERVER_PID > /dev/null
+        then
+          echo "Server++ started successfully"
+        else
+          echo "Server++ failed to start"
+          exit 1
+        fi
+
+    - name: Kill server
+      run: kill $SERVER_PID
