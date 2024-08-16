@@ -28,4 +28,4 @@ jobs:
         make
 
     - name: Run tests
-      run: ./build/your_executable_name
+      run: ./build/serverplusplus
