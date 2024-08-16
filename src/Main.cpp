@@ -2,6 +2,7 @@
 #include "./engines/event/EventHandler.h"
 #include "engines/logging/Logger.h"
 #include "utils/IdGen.h"
+#include "utils/ArgumentHandler.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -19,36 +20,8 @@ int createSocket() { return -1; }
 
 int main(int argc, char *argv[])
 {
-    // set log level from command line argument
-    if (argc > 1)
-    {
-        for (int i = 1; i < argc; i++)
-        {
-            if (argv[i] == "--log-level")
-            {
-                if (strcmp(argv[i + 1], "DEBUG") == 0)
-                {
-                    Logger::GetInstance().SetLogLevel(DEBUG);
-                }
-                else if (strcmp(argv[i + 1], "INFO") == 0)
-                {
-                    Logger::GetInstance().SetLogLevel(INFO);
-                }
-                else if (strcmp(argv[i + 1], "WARN") == 0)
-                {
-                    Logger::GetInstance().SetLogLevel(WARN);
-                }
-                else if (strcmp(argv[i + 1], "ERROR") == 0)
-                {
-                    Logger::GetInstance().SetLogLevel(ERROR);
-                }
-                else
-                {
-                    Logger::GetInstance().SetLogLevel(INFO);
-                }
-            }
-        }
-    }
+    // check for and process and CLI arguments
+    ArgumentHandler::ProcessArgumentHandlers(argc, argv);
 
     std::cout << "\nTesting the EventBus" << std::endl;
 

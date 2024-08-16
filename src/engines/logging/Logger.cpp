@@ -12,7 +12,7 @@ void Logger::Log(const std::string &message, LogLevel level, const std::string &
         return;
 
     std::lock_guard<std::mutex> lock(logMutex);
-    std::string logMessage = "[" + GetLogLevelString(level) + "]: " + (functionName.empty() ? "" : "[" + functionName + "] - ") + message;
+    std::string logMessage = "[" + GetLogLevelString(level) + "] " + (functionName.empty() ? "" : "[" + functionName + "] ") + message;
 
     if (logFile.is_open())
     {
@@ -24,20 +24,37 @@ void Logger::Log(const std::string &message, LogLevel level, const std::string &
     }
 }
 
-void Logger::SetLogFile(const std::string &filename)
+void Logger::SetLogFile(const std::string &fileName)
 {
     std::lock_guard<std::mutex> lock(logMutex);
     if (logFile.is_open())
     {
         logFile.close();
     }
-    logFile.open(filename, std::ios::app);
+    logFile.open(fileName, std::ios::out | std::ios::app);
 }
 
 void Logger::SetLogLevel(LogLevel level)
 {
-    logLevel = level;
-    std::cout << "Log level set to " << GetLogLevelString(level) << std::endl;
+    std::lock_guard<std::mutex> lock(logMutex);
+    this->logLevel = level;
+}
+
+std::string Logger::GetLogLevelString(LogLevel level)
+{
+    switch (level)
+    {
+    case DEBUG:
+        return "DEBUG";
+    case INFO:
+        return "INFO";
+    case WARN:
+        return "WARN";
+    case ERROR:
+        return "ERROR";
+    default:
+        return "UNKNOWN";
+    }
 }
 
 Logger::~Logger()
@@ -45,22 +62,5 @@ Logger::~Logger()
     if (logFile.is_open())
     {
         logFile.close();
-    }
-}
-
-std::string Logger::GetLogLevelString(LogLevel level)
-{
-    switch (level)
-    {
-    case INFO:
-        return "INFO";
-    case WARN:
-        return "WARN";
-    case ERROR:
-        return "ERROR";
-    case DEBUG:
-        return "DEBUG";
-    default:
-        return "UNKNOWN";
     }
 }

@@ -1,10 +1,10 @@
 #include "EventHandler.h"
-#include "IdGen.h"
+#include "../src/utils/IdGen.h"
 
 // Set prefix used for event handler UUIDs
 const std::string UUID_PREFIX = "handler_";
 
-// constructor
+// Constructor definition
 EventHandler::EventHandler(std::string type, std::function<void(Event)> callback)
     : type(type), callback(callback)
 {

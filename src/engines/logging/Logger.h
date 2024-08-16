@@ -77,9 +77,9 @@ private:
     std::ofstream logFile;
 
     /**
-     * @brief The current log level
+     * @brief The current log level - default is WARN
      */
-    LogLevel logLevel = LogLevel::INFO;
+    LogLevel logLevel = LogLevel::WARN;
 
     /**
      * @brief Mutex to ensure thread safety

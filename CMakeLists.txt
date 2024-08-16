@@ -5,8 +5,19 @@ project(ServerPlusPlus)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Add executable
-add_executable(serverplusplus src/Main.cpp src/engines/event/EventBus.cpp src/engines/logging/Logger.cpp)
+# Add all source files
+set(SOURCES
+    src/Main.cpp
+    src/utils/ArgumentHandler.cpp
+    src/engines/event/EventBus.cpp
+    src/engines/event/EventHandler.cpp
+    src/engines/logging/Logger.cpp
+    src/utils/IdGen.h
+    # Add other source files here
+)
+
+# Add executables
+add_executable(serverplusplus ${SOURCES})
 
 # Include directories
 target_include_directories(serverplusplus PRIVATE ${PROJECT_SOURCE_DIR}/src)

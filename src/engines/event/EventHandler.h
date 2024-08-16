@@ -4,6 +4,7 @@
 #include "Event.h"
 #include <string>
 #include <functional>
+
 /**
  * @brief The EventHandler struct represents a callback function that is called in response to an appropriate event, as well
  * as other info regarding the event handler (UUID, event type to handle, etc)
@@ -11,7 +12,7 @@
 struct EventHandler
 {
     /**
-     * @brief The UUID of the event handler - used to identify a speific event handler
+     * @brief The UUID of the event handler - used to identify a specific event handler
      */
     std::string uuid;
 
@@ -27,12 +28,10 @@ struct EventHandler
 
     /**
      * @brief Constructor
-     * @param uuid The UUID of the event handler
      * @param type The type of event to handle
      * @param callback The callback function to call when the event is published
      */
-    EventHandler(std::string type, std::function<void(Event)> callback)
-        : type(type), callback(callback) {}
+    EventHandler(std::string type, std::function<void(Event)> callback);
 };
 
 #endif // EVENTHANDLER_H
