@@ -1,3 +1,4 @@
+# This is a very basic build script to test the program can compile an executable and run it
 name: Test Server++ can build and execute
 
 on:
@@ -29,7 +30,7 @@ jobs:
     - name: Start Server++ in background
       run: |
         ./build/serverplusplus &   # Start the server in the background
-        SERVER_PID=$!                    # Save the process ID
+        echo "SERVER_PID=$!" >> $GITHUB_ENV  # Save the process ID to an environment variable
 
     - name: Wait for Server++ to start
       run: sleep 10  # Wait for a few seconds to give the server time to start
